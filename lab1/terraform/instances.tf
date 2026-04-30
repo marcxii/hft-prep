@@ -13,6 +13,28 @@ data "aws_ami" "rhel_8" {
   }
 }
 
+resource "aws_security_group" "salt_connection"{
+    name        = "Salt ec2"
+    description = "Allow salt stack to communicate"
+    vpc_id      = aws_vpc.lab.id
+}
+
+resource "aws_vpc_security_group_ingress_rule" "salt_publish" {
+    security_group_id = aws_security_group.salt_connection.id
+    cidr_ipv6         = "aws_vpc.main.ipv6_cidr_block"
+    from_port         = 4505
+    to_port           = 4506
+    ip_protocol       = "tcp"
+
+}
+
+# Allow all traffic out
+resource "aws_vpc_security_group_egress_rule" "allow_outbound_connection" {
+    security_group_id = aws_security_group.allow_tls.td
+    cidr_ipv6         = "0.0.0.0/0"
+    ip_protocol       = "-1"
+}
+
 
 resource "aws_instance" "salt_master" {
     ami                    = data.aws_ami.rhel_8

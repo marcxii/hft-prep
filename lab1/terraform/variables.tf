@@ -1,4 +1,4 @@
-variable "key_name"{
+variable "key_name" {
     description = "Name of kms key associated with instance volume"
     type        = string
     default     = "lab1_key"
